@@ -1,0 +1,84 @@
+dff=df[["ed","employ","equip","callcard","wireless"]]
+ddf=pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-ML0101EN-SkillsNetwork/labs/Module%203/data/ChurnData.csv")
+display(df)
+
+churn_df = df[['ed', 'employ', 'equip', 'callcard','wireless']]
+churn_df['income'] = churn_df['wireless'].astype('int')
+churn_df.head()
+
+X = np.asanyarray(churn_df[['ed', 'employ', 'equip', 'callcard','wireless']])
+X[0:5]
+
+y = np.asanyarray(df['churn'])
+y [0:5]
+
+"""
+OUTPUT IS AS SHOWN ------
+
+	tenure	age	address	income	ed	employ	equip	callcard	wireless	longmon	...	pager	internet	callwait	confer	ebill	loglong	logtoll	lninc	custcat	churn
+0	11.0	33.0	7.0	136.0	5.0	5.0	0.0	1.0	1.0	4.40	...	1.0	0.0	1.0	1.0	0.0	1.482	3.033	4.913	4.0	1.0
+1	33.0	33.0	12.0	33.0	2.0	0.0	0.0	0.0	0.0	9.45	...	0.0	0.0	0.0	0.0	0.0	2.246	3.240	3.497	1.0	1.0
+2	23.0	30.0	9.0	30.0	1.0	2.0	0.0	0.0	0.0	6.30	...	0.0	0.0	0.0	1.0	0.0	1.841	3.240	3.401	3.0	0.0
+3	38.0	35.0	5.0	76.0	2.0	10.0	1.0	1.0	1.0	6.05	...	1.0	1.0	1.0	1.0	1.0	1.800	3.807	4.331	4.0	0.0
+4	7.0	35.0	14.0	80.0	2.0	15.0	0.0	1.0	0.0	7.10	...	0.0	0.0	1.0	1.0	0.0	1.960	3.091	4.382	3.0	0.0
+...	...	...	...	...	...	...	...	...	...	...	...	...	...	...	...	...	...	...	...	...	...
+195	55.0	44.0	24.0	83.0	1.0	23.0	0.0	1.0	0.0	17.35	...	0.0	0.0	0.0	1.0	0.0	2.854	3.199	4.419	3.0	0.0
+196	34.0	23.0	3.0	24.0	1.0	7.0	0.0	1.0	0.0	6.00	...	0.0	0.0	1.0	1.0	0.0	1.792	3.332	3.178	3.0	0.0
+197	6.0	32.0	10.0	47.0	1.0	10.0	0.0	1.0	0.0	3.85	...	0.0	0.0	1.0	1.0	0.0	1.348	3.168	3.850	3.0	0.0
+198	24.0	30.0	0.0	25.0	4.0	5.0	0.0	1.0	1.0	8.70	...	1.0	1.0	1.0	1.0	1.0	2.163	3.866	3.219	4.0	1.0
+199	61.0	50.0	16.0	190.0	2.0	22.0	1.0	1.0	1.0	16.85	...	0.0	1.0	0.0	0.0	1.0	2.824	3.240	5.247	2.0	0.0
+200 rows × 28 columns
+
+array([[ 5.,  5.,  0.,  1.,  1.],
+       [ 2.,  0.,  0.,  0.,  0.],
+       [ 1.,  2.,  0.,  0.,  0.],
+       [ 2., 10.,  1.,  1.,  1.],
+       [ 2., 15.,  0.,  1.,  0.]])
+"""
+
+from sklearn import preprocessing
+
+X = preprocessing.StandardScaler().fit(X).transform(X)
+X[0:5]
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=4)
+
+print ('Train set:', X_train.shape,  y_train.shape)
+print ('Test set:', X_test.shape,  y_test.shape)
+
+"""
+OUTPUT IS AS SHOWN -------
+
+Train set: (160, 4) (160,)
+Test set: (40, 4) (40,)
+"""
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix
+
+LR = LogisticRegression(C=0.01, solver='liblinear').fit(X_train,y_train)
+LR
+
+yhat = LR.predict(X_test)
+yhat
+
+yhat_prob = LR.predict_proba(X_test)
+yhat_prob
+
+a=confusion_matrix(y_test, yhat)
+print("Confusion matrix: ",a)
+print((a[0][0]+a[1][1])/(a[0][0]+a[0][1]+a[1][0]+a[1][1]))
+
+"""
+THE OUTPUT IS AS SHOWN -----
+Confusion matrix: [[18  7]
+                   [ 9  6]]
+
+0.6
+"""
+
+
+
+
+
